@@ -2,6 +2,39 @@
 
 import sys
 
+def restock(inventory:dict, min: int) -> list:
+    needed: list = []
+    for k, v in inventory.items():
+        if v < min:
+            needed.append(k)
+    return needed
+
+def make_nested(inventory: dict, n:int) -> dict:
+    moderate: dict = {}
+    scarce: dict = {}
+    nested: dict = {}
+    for key, value in inventory.items():
+        if value < n:
+            scarce[key] = value
+        else:
+            moderate[key] = value
+    nested["Moderate"] = moderate
+    nested["Scarce"] = scarce
+    return nested
+
+def get_max_value(inventory: dict) -> tuple:
+    items: list = list(inventory.items())
+    max: int = 0
+    for t in items:
+        if t[1] > max:
+            max = t[1]
+            key = t[0]        
+    return (key, max)
+
+def get_min_value(inventory: dict) -> tuple:
+    min_item = min(inventory.items(), key=lambda item: item[1])
+    return min_item
+
 def order_dict(inventory: dict) -> list:
     items: list = []
     for key in inventory:
@@ -43,14 +76,40 @@ def main() -> None:
 
     print("=== Current Inventory ===")
     total_qty = sum(inventory.values())
-    
     if total_qty == 0:
         print("Inventory is empty.")
     else:
         order_list = order_dict(inventory)
         for name, qty in order_list:
             print(f"{name}: {qty} units ({qty/total_qty * 100:.1f}%)")
+    print("=== Inventory Statistics ===")
+    max_name, max_qty = get_max_value(inventory)
+    min_name, min_qty = get_min_value(inventory)
+    max_unit = "units"
+    min_unit = "units"
+    if max_unit == 1:
+        max_qty = "unit"
+    if min_qty == 1:
+        min_unit = "unit"
+    print(f"Most abundant: {max_name} ({max_qty} {max_unit})")
+    print(f"Least abundant: {min_name} ({min_qty} {min_unit})")    
 
+    print("=== Item Categories ===")
+    nested_dict: dict = make_nested(inventory, 5)
+    for key, value in nested_dict.items():
+        print(f"{key}: {value}")
+
+    print("===  Management Suggestions ===")
+    print(f"Restock needed: {restock(inventory, 2)}")
+
+    print("=== Dictionary Properties Demo ===")
+    keys = list(inventory.keys())
+    values = list(inventory.values())
+    str_values = []
+    for n in values:
+        str_values.append(str(n))
+    print(f"Dictionary keys: {", ".join(keys)}")
+    print(f"Dictionary values: {", ".join(str_values)}")
 
 if __name__ == "__main__":
     main()
