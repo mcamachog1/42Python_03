@@ -2,6 +2,22 @@
 
 import sys
 
+def order_dict(inventory: dict) -> list:
+    items: list = []
+    for key in inventory:
+        item = [key, inventory[key]]
+        items.append(item)
+    end = len(items) - 1
+    for i in range(len(items) - 1):
+        for j in range(end):
+            if end > 0:
+                if items[j][1] < items[j + 1][1]:
+                    temp = items[j + 1]
+                    items[j + 1]= items[j]
+                    items[j] = temp
+        end -= 1
+    return items
+
 def main() -> None:
     print("=== Inventory System Analysis ===")
     if len(sys.argv) == 1:
@@ -31,11 +47,9 @@ def main() -> None:
     if total_qty == 0:
         print("Inventory is empty.")
     else:
-        items: list[list] = []
-        for key in inventory:
-            items.add([key, inventory[key]])
-        
-#            print(f"{key}: {inventory[key]} units ({inventory[key]/total_qty * 100:.1f}%)")
+        order_list = order_dict(inventory)
+        for name, qty in order_list:
+            print(f"{name}: {qty} units ({qty/total_qty * 100:.1f}%)")
 
 
 if __name__ == "__main__":
