@@ -74,7 +74,7 @@ def main() -> None:
     print(f"Total items in inventory: {sum(inventory.values())}")
     print(f"Unique item types: {len(inventory.keys())}")
 
-    print("=== Current Inventory ===")
+    print("\n=== Current Inventory ===")
     total_qty = sum(inventory.values())
     if total_qty == 0:
         print("Inventory is empty.")
@@ -82,7 +82,7 @@ def main() -> None:
         order_list = order_dict(inventory)
         for name, qty in order_list:
             print(f"{name}: {qty} units ({qty/total_qty * 100:.1f}%)")
-    print("=== Inventory Statistics ===")
+    print("\n=== Inventory Statistics ===")
     max_name, max_qty = get_max_value(inventory)
     min_name, min_qty = get_min_value(inventory)
     max_unit = "units"
@@ -94,15 +94,15 @@ def main() -> None:
     print(f"Most abundant: {max_name} ({max_qty} {max_unit})")
     print(f"Least abundant: {min_name} ({min_qty} {min_unit})")    
 
-    print("=== Item Categories ===")
+    print("\n=== Item Categories ===")
     nested_dict: dict = make_nested(inventory, 5)
     for key, value in nested_dict.items():
         print(f"{key}: {value}")
 
-    print("===  Management Suggestions ===")
+    print("\n===  Management Suggestions ===")
     print(f"Restock needed: {restock(inventory, 2)}")
 
-    print("=== Dictionary Properties Demo ===")
+    print("\n=== Dictionary Properties Demo ===")
     keys = list(inventory.keys())
     values = list(inventory.values())
     str_values = []
@@ -110,6 +110,17 @@ def main() -> None:
         str_values.append(str(n))
     print(f"Dictionary keys: {", ".join(keys)}")
     print(f"Dictionary values: {", ".join(str_values)}")
+    item_to_find = 'sword'
+    exists = item_to_find in inventory
+    print(f"Sample lookup - '{item_to_find}' in inventory: {exists}")
+
+    print("\n=== Dictionary Extra Demo ===")    
+    result_ok = inventory.get(item_to_find, "Item not found")
+    print(f"Sample lookup - '{item_to_find}' qty in inventory: {result_ok}")
+    item_to_find = 'not_exists'
+    exists = item_to_find in inventory
+    print(f"Sample lookup - '{item_to_find}' in inventory: {exists}")
+
 
 if __name__ == "__main__":
     main()
