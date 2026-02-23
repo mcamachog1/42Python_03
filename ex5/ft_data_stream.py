@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from typing import Generator
+import time
+
 
 def load_game_data() -> list[dict]:
     players = [
@@ -356,7 +358,6 @@ def load_game_data() -> list[dict]:
         }
     ]
     return players
-    
 
 
 def stream_events(players: list[dict]) -> Generator[str, None, None]:
@@ -367,28 +368,67 @@ def stream_events(players: list[dict]) -> Generator[str, None, None]:
             yield f"Error processing player: {e}"
 
 
+def stream_fibonacci(n: int) -> Generator[int, None, None]:
+    n1 = 0
+    n2 = 1
+    for i in range(n - 2):
+        if i == 0:
+            yield n1
+        if i == 1:
+            yield n2
+        result = n1 + n2
+        n1 = n2
+        n2 = result
+        yield result
+
+
 def main() -> None:
-    # players = [Player("alice"), Player("bob"), Player("charlie"), Player("dave")]
-    # players[0].level_up("killed monster")
-    # players[1].level_up("found treasure")
-    # players[2].level_up("leveled up")
-
     players = load_game_data()
-
-    print("=== Game Data Stream Processor ===\n")    
+    print("=== Game Data Stream Processor ===\n")
     iterator = iter(stream_events(players))
     i = 1
+    # Stream the first 1000 events
     size = 1000
     print(f"Processing {size} game events...\n")
-
+    # Statistic vars
+    events_processed: int = 0
+    hl_players: int = 0
+    treasure_events: int = 0
+    levelup_events: int = 0
+    start = time.time()
     while True and i <= size:
         try:
             event = next(iterator)
-            print(f"Event {i}: Player {event["player"]} (level {event["data"]["level"]}) {event["event_type"]}")
+            print(f"Event {i}: Player {event['player']} "
+                  f"(level {event['data']['level']}) {event['event_type']}")
+            events_processed += 1
+            if event["data"]["level"] > 10:
+                hl_players += 1
+            if event["event_type"] == "item_found":
+                treasure_events += 1
+            if event["event_type"] == "level_up":
+                levelup_events += 1              
             i += 1
         except StopIteration:
             break
     print("...")
+    end = time.time()
+    duration = end - start
+    print("=== Stream Analytics ===")
+    print(f"Total events processed: {events_processed}")
+    print(f"High-level players (10+): {hl_players}")
+    print(f"Treasure events: {treasure_events}")
+    print(f"Level-up events: {levelup_events}")
+    print("\nMemory usage: Constant (streaming)")
+    print(f"Processing time: {duration:.3f} seconds")
+
+
+def test_fibo() -> None:
+    iterator = iter(stream_fibonacci(10))
+    fibo_sequence: list[int] = []
+    for n in iterator:
+        fibo_sequence.append(n)
+    print(fibo_sequence)
 
 if __name__ == "__main__":
-    main()
+    test_fibo()
