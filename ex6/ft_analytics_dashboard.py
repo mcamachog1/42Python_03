@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-from typing import Generator
-import time
-
 
 def load_game_data() -> list[dict]:
     players = [
@@ -359,116 +356,88 @@ def load_game_data() -> list[dict]:
     ]
     return players
 
+# 'id': 1,
+# 'player': 'frank',
+# 'event_type': 'login',
+# 'timestamp': '2024-01-01T23:17',
+# 'data': {'level': 16, 'score_delta': 128, 'zone': 'pixel_zone_2'}
 
-def stream_events(players: list[dict]) -> Generator[dict, None, None]:
-    for player in players:
-        try:
-            yield player
-        except Exception as e:
-            raise Exception(e)
-
-
-def stream_fibonacci(n: int) -> Generator[int, None, None]:
-    n1 = 0
-    n2 = 1
-    for i in range(n - 2):
-        if i == 0:
-            yield n1
-        if i == 1:
-            yield n2
-        result = n1 + n2
-        n1 = n2
-        n2 = result
-        yield result
+def list_comprehension() -> None:
+    print("\n=== List Comprehension Examples ===")
+    events: dict = load_game_data()
+    high_levels = [e['player'] for e in events if e['data']['level'] > 47]
+    players_in_level = [e['player'] for e in events if e['data']['level'] == 1]
+    print(f"High level players (level > 47): {high_levels}")
+    print(f"Players in level (1): {players_in_level}")
+    # top 5 scores
+    all_scores = [e['data']['score_delta'] for e in events]
+    top_5_scores = sorted(all_scores, reverse=True)[:5]
+    print(f"Top 5 scores: {top_5_scores}")
 
 
-def stream_prime_numbers(n: int) -> Generator[int, None, None]:
-    """
-    :param n: the first n prime numbers
-    :type n: int
-    :return: stream the prime numbers
-    :rtype: Generator[int, None, None]
-    """
-    def ft_is_prime(n: int) -> bool:
-        i = 2
-        is_prime = True
-        while i <= n/2:
-            if n % i == 0:
-                is_prime = False
-                break
-            i += 1
-        return is_prime
-    i = 0
-    k = 2
-    while i < n:
-        if ft_is_prime(k):
-            i += 1
-            yield k
-        k += 1
+def dict_comprehension() -> None:
+    print("\n=== Dict Comprehension Examples ===")
+    events: dict = load_game_data()    
+    # Sort the event list
+    sorted_events = sorted(events, key=lambda e: e['data']['score_delta'], reverse=True)
+    # dict_sorted = {}
+    # for order_dict in sorted_events[:5]:
+    #     key = order_dict['player']
+    #     value = order_dict['data']['score_delta']
+    #     dict_sorted[key] = value
+    dict_sorted = {e['player']: e['data']['score_delta'] for e in sorted_events[:5]}        
+    print(f"Top 5 players: {dict_sorted}")        
+    # Players by level
+    all_levels = [e['data']['level'] for e in events]
+    level_counts = {lvl: all_levels.count(lvl) for lvl in set(all_levels)}
+    print(f"Players by level: {level_counts}")
 
+    # Group players by range
+    # 1. Define the range logic
+    def get_range(level):
+        if level <= 10: return "0-10 (Beginner)"
+        if level <= 20: return "11-20 (Intermediate)"
+        return "21+ (Pro)"
 
-def test_stream() -> None:
-    players = load_game_data()
-    print("=== Game Data Stream Processor ===\n")
-    iterator = iter(stream_events(players))
-    i = 1
-    # Stream the first 1000 events
-    size = 1000
-    print(f"Processing {size} game events...\n")
-    # Statistic vars
-    events_processed: int = 0
-    hl_players: int = 0
-    treasure_events: int = 0
-    levelup_events: int = 0
-    start = time.time()
-    while True and i <= size:
-        try:
-            event = next(iterator)
-            events_processed += 1
-            if event["data"]["level"] > 10:
-                hl_players += 1
-            if event["event_type"] == "item_found":
-                treasure_events += 1
-            if event["event_type"] == "level_up":
-                levelup_events += 1
-            print(f"Event {i}: Player {event['player']} "
-                  f"(level {event['data']['level']}) {event['event_type']}")
-        except StopIteration:
-            break
-        except Exception as e:
-            print(f"Error processing player {event['player']} {e}")
-        finally:
-            i += 1
-    print("...")
-    end = time.time()
-    duration = end - start
-    print("=== Stream Analytics ===")
-    print(f"Total events processed: {events_processed}")
-    print(f"High-level players (10+): {hl_players}")
-    print(f"Treasure events: {treasure_events}")
-    print(f"Level-up events: {levelup_events}")
-    print("\nMemory usage: Constant (streaming)")
-    print(f"Processing time: {duration:.3f} seconds")
+    # 2. Extract all levels first
+    levels = [e['data']['level'] for e in events]
 
+    # 3. Create the distribution dictionary (Dict Comprehension)
+    # We iterate over the predefined ranges to count occurrences
+    ranges = ["0-10 (Beginner)", "11-20 (Intermediate)", "21+ (Pro)"]
+    level_distribution = {
+        r: sum(1 for lvl in levels if get_range(lvl) == r) 
+        for r in ranges
+    }
 
-def test_fibo(first_n: int) -> None:
-    fibo_sequence: list[int] = []
-    for n in stream_fibonacci(first_n):
-        fibo_sequence.append(n)
-    result_str = ", ".join(str(n) for n in fibo_sequence)
-    print(f"Fibonacci sequence (first 10): {result_str}")
+    print(f"Level categories: {level_distribution}")
+    # for group, count in level_distribution.items():
+    #     print(f"{group}: {count} players")    
 
+def set_comprehension() -> None:
+    print("\n=== Set Comprehension Examples ===")
+    events: dict = load_game_data()        
+    unique_players = {e['player'] for e in events}
+    unique_events = {e['event_type'] for e in events}
+    active_zones = {e['data']['zone'] for e in events}
+    print(f"Unique players: {unique_players}")
+    print(f"Unique events: {unique_events}")
+    print(f"Active zones: {active_zones}")
 
-def test_prime(first_n: int) -> None:
-    prime_numbers: list[int] = []
-    for n in stream_prime_numbers(first_n):
-        prime_numbers.append(n)
-    result_str = ", ".join(str(n) for n in prime_numbers)
-    print(f"Prime numbers (first 5): {result_str}")
-
+def combined_analysis() -> None:
+    print("\n== Combined Analysis ===")    
+    events: dict = load_game_data()
+    unique_players = {e['player'] for e in events}    
+    total_players = len(unique_players)
+    print(f"Total players: {total_players}")
+    unique_events = {e['event_type'] for e in events}
+    total_unique_e = len(unique_events)
+    print(f"Total unique events: {total_unique_e}")
+    
 
 if __name__ == "__main__":
-    test_stream()
-    print("\n=== Generator Demonstration ===")
-    test_fibo(10)
-    test_prime(5)
+    print("=== Game Analytics Dashboard ===")
+    list_comprehension()
+    dict_comprehension()
+    set_comprehension()
+    combined_analysis()

@@ -92,10 +92,10 @@ def main() -> None:
     print("\n=== Inventory Statistics ===")
     max_name, max_qty = get_max_value(inventory)
     min_name, min_qty = get_min_value(inventory)
-    max_unit = "units"
-    min_unit = "units"
-    if max_unit == 1:
-        max_qty = "unit"
+    max_unit: str = "units"
+    min_unit: str = "units"
+    if max_qty == 1:
+        max_unit = "unit"
     if min_qty == 1:
         min_unit = "unit"
     print(f"Most abundant: {max_name} ({max_qty} {max_unit})")
@@ -115,8 +115,10 @@ def main() -> None:
     str_values = []
     for n in values:
         str_values.append(str(n))
-    print(f"Dictionary keys: {", ".join(keys)}")
-    print(f"Dictionary values: {", ".join(str_values)}")
+    result_keys = ", ".join(keys)
+    result_values = ", ".join(str_values)
+    print(f"Dictionary keys: {result_keys}")
+    print(f"Dictionary values: {result_values}")
     item_to_find = 'sword'
     exists = item_to_find in inventory
     print(f"Sample lookup - '{item_to_find}' in inventory: {exists}")
