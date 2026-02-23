@@ -2,14 +2,16 @@
 
 import sys
 
-def restock(inventory:dict, min: int) -> list:
+
+def restock(inventory: dict, min: int) -> list:
     needed: list = []
     for k, v in inventory.items():
         if v < min:
             needed.append(k)
     return needed
 
-def make_nested(inventory: dict, n:int) -> dict:
+
+def make_nested(inventory: dict, n: int) -> dict:
     moderate: dict = {}
     scarce: dict = {}
     nested: dict = {}
@@ -22,18 +24,21 @@ def make_nested(inventory: dict, n:int) -> dict:
     nested["Scarce"] = scarce
     return nested
 
+
 def get_max_value(inventory: dict) -> tuple:
     items: list = list(inventory.items())
     max: int = 0
     for t in items:
         if t[1] > max:
             max = t[1]
-            key = t[0]        
+            key = t[0]
     return (key, max)
+
 
 def get_min_value(inventory: dict) -> tuple:
     min_item = min(inventory.items(), key=lambda item: item[1])
     return min_item
+
 
 def order_dict(inventory: dict) -> list:
     items: list = []
@@ -46,10 +51,11 @@ def order_dict(inventory: dict) -> list:
             if end > 0:
                 if items[j][1] < items[j + 1][1]:
                     temp = items[j + 1]
-                    items[j + 1]= items[j]
+                    items[j + 1] = items[j]
                     items[j] = temp
         end -= 1
     return items
+
 
 def main() -> None:
     print("=== Inventory System Analysis ===")
@@ -65,7 +71,8 @@ def main() -> None:
             if len(pair) != 2 or not pair[0] or not pair[1]:
                 print(
                     "Error in items provided. "
-                    f"Usage: python3 {sys.argv[0]} <item1:qty1> <item2:qty2> ...")
+                    f"Usage: python3 {sys.argv[0]} "
+                    "<item1:qty1> <item2:qty2> ...")
                 return
             inventory[pair[0]] = int(pair[1])
         except ValueError as e:
@@ -92,7 +99,7 @@ def main() -> None:
     if min_qty == 1:
         min_unit = "unit"
     print(f"Most abundant: {max_name} ({max_qty} {max_unit})")
-    print(f"Least abundant: {min_name} ({min_qty} {min_unit})")    
+    print(f"Least abundant: {min_name} ({min_qty} {min_unit})")
 
     print("\n=== Item Categories ===")
     nested_dict: dict = make_nested(inventory, 5)
@@ -114,7 +121,7 @@ def main() -> None:
     exists = item_to_find in inventory
     print(f"Sample lookup - '{item_to_find}' in inventory: {exists}")
 
-    print("\n=== Dictionary Extra Demo ===")    
+    print("\n=== Dictionary Extra Demo ===")
     result_ok = inventory.get(item_to_find, "Item not found")
     print(f"Sample lookup - '{item_to_find}' qty in inventory: {result_ok}")
     item_to_find = 'not_exists'
