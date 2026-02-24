@@ -356,84 +356,163 @@ def load_game_data() -> list[dict]:
     ]
     return players
 
-# 'id': 1,
-# 'player': 'frank',
-# 'event_type': 'login',
-# 'timestamp': '2024-01-01T23:17',
-# 'data': {'level': 16, 'score_delta': 128, 'zone': 'pixel_zone_2'}
 
 def list_comprehension() -> None:
     print("\n=== List Comprehension Examples ===")
+    # Load example data
     events: dict = load_game_data()
+
+    # === PLAYERS IN TWO LAST LEVELS ===
+    # List with a condition
     high_levels = [e['player'] for e in events if e['data']['level'] > 47]
-    players_in_level = [e['player'] for e in events if e['data']['level'] == 1]
     print(f"High level players (level > 47): {high_levels}")
+
+    # === COUNT PLAYERS IN LEVEL 1 ===
+    # List with a condition
+    players_in_level = [e['player'] for e in events if e['data']['level'] == 1]
     print(f"Players in level (1): {players_in_level}")
-    # top 5 scores
+
+    # === TOP 5 SCORES ===
+    # List just with the scores
     all_scores = [e['data']['score_delta'] for e in events]
+    # Get the first 5 elements from an ordered list (from greatest to least)
     top_5_scores = sorted(all_scores, reverse=True)[:5]
     print(f"Top 5 scores: {top_5_scores}")
+
+    # === SCORES OF A PLAYER SORTED ===
+    # Sort list comprehension with a condition
+    scores = sorted(
+        [e['data']['score_delta']
+            for e in events if e['player'] == "alice"],
+        reverse=True
+        )
+    print(f"alice's scores: {scores}")
 
 
 def dict_comprehension() -> None:
     print("\n=== Dict Comprehension Examples ===")
-    events: dict = load_game_data()    
-    # Sort the event list
-    sorted_events = sorted(events, key=lambda e: e['data']['score_delta'], reverse=True)
-    # dict_sorted = {}
-    # for order_dict in sorted_events[:5]:
-    #     key = order_dict['player']
-    #     value = order_dict['data']['score_delta']
-    #     dict_sorted[key] = value
-    dict_sorted = {e['player']: e['data']['score_delta'] for e in sorted_events[:5]}        
-    print(f"Top 5 players: {dict_sorted}")        
-    # Players by level
+    # Load example data
+    events: dict = load_game_data()
+
+    # ==== TOP 5 SCORE WITH PLAYERS ===
+
+    # === EACH PLAYER MAX SCORE
+    # 1.- lista (set) unica de jugadores
+    unique_players = {e['player'] for e in events}
+    # 2.- Dictionary player:max_score
+    max_score_by_player = {
+        player: max(e['data']['score_delta']
+                    for e in events if e['player'] == player)
+        for player in unique_players
+        }
+    # 3.- Sort greatest to least and get first 5
+    top_5 = sorted(
+        max_score_by_player.items(),
+        key=lambda item: item[1],
+        reverse=True
+        )[:5]
+    print(f"Top 5 players: {top_5}")
+
+    # === NUMBERS OF PLAYER BY LEVEL ===
+    # Make a list with each ocurrence of level
     all_levels = [e['data']['level'] for e in events]
+    # Make a dictionary key=level_name and value=count_levels
     level_counts = {lvl: all_levels.count(lvl) for lvl in set(all_levels)}
     print(f"Players by level: {level_counts}")
 
-    # Group players by range
-    # 1. Define the range logic
-    def get_range(level):
-        if level <= 10: return "0-10 (Beginner)"
-        if level <= 20: return "11-20 (Intermediate)"
-        return "21+ (Pro)"
-
-    # 2. Extract all levels first
-    levels = [e['data']['level'] for e in events]
-
+    # === MAKE CATEGORIES AND COUNT PLAYERS IN EACH CATEGORY ===
+    # 1. Define categories: Beginners, Intermediate, Pro
+    def get_range(level) -> str:
+        if level <= 10:
+            return "Beginner"
+        if level <= 20:
+            return "Intermediate"
+        return "Pro"
+    # 2. Extract all levels
+    all_levels = [e['data']['level'] for e in events]
     # 3. Create the distribution dictionary (Dict Comprehension)
-    # We iterate over the predefined ranges to count occurrences
-    ranges = ["0-10 (Beginner)", "11-20 (Intermediate)", "21+ (Pro)"]
+    # For each category count all level ocurrences
+    # if it belongs to the category
+    ranges = ["Beginner", "Intermediate", "Pro"]
     level_distribution = {
-        r: sum(1 for lvl in levels if get_range(lvl) == r) 
+        r: sum(1 for lvl in all_levels if get_range(lvl) == r)
         for r in ranges
     }
-
     print(f"Level categories: {level_distribution}")
-    # for group, count in level_distribution.items():
-    #     print(f"{group}: {count} players")    
+
 
 def set_comprehension() -> None:
     print("\n=== Set Comprehension Examples ===")
-    events: dict = load_game_data()        
+    # Load example data
+    events: dict = load_game_data()
+
+    # === UNIQUE PLAYERS ===
+    # Like a list but without duplicate elements (SET)
     unique_players = {e['player'] for e in events}
+
+    # === UNIQUE EVENTS ===
+    # Like a list but without duplicate elements (SET)
     unique_events = {e['event_type'] for e in events}
+
+    # === UNIQUE ZONES ===
+    # Like a list but without duplicate elements (SET)
     active_zones = {e['data']['zone'] for e in events}
+
     print(f"Unique players: {unique_players}")
     print(f"Unique events: {unique_events}")
     print(f"Active zones: {active_zones}")
 
+
 def combined_analysis() -> None:
-    print("\n== Combined Analysis ===")    
+    print("\n== Combined Analysis ===")
+    # Load example data
     events: dict = load_game_data()
-    unique_players = {e['player'] for e in events}    
+
+    # === COUNT UNIQUE PLAYERS ===
+    # set
+    unique_players = {e['player'] for e in events}
+    # count set elements
     total_players = len(unique_players)
-    print(f"Total players: {total_players}")
+
+    # === COUNT UNIQUE EVENTS ===
+    # set
     unique_events = {e['event_type'] for e in events}
+    # count set elements
     total_unique_e = len(unique_events)
+
+    # === EACH PLAYER MAX SCORE
+    # 1.- lista (set) unica de jugadores
+    unique_players = {e['player'] for e in events}
+    # 2.- Dictionary player:max_score
+    max_score_by_player = {
+        player: max(e['data']['score_delta']
+                    for e in events if e['player'] == player)
+        for player in unique_players
+        }
+
+    # === EACH PLAYER TOTAL SCORE ===
+    # 1.- Dictionary player:total_score
+    total_score_by_player = {
+        player: sum(e['data']['score_delta']
+                    for e in events if e['player'] == player)
+        for player in unique_players
+        }
+
+    # === AVERAGE SCORE ===
+    values = total_score_by_player.values()
+    average = sum(values)/len(values)
+
+    # === PLAYER WITH THE GREATEST SCORE ===
+    max_key = max(total_score_by_player, key=total_score_by_player.get)
+    max_value = total_score_by_player[max_key]
+
+    print(f"Total players: {total_players}")
     print(f"Total unique events: {total_unique_e}")
-    
+    print(f"Max score by achievement: {max_score_by_player}")
+    print(f"Total score: {total_score_by_player}")
+    print(f"Average score: {average}")
+    print(f"Top performer: {max_key} ({max_value} points)")
+
 
 if __name__ == "__main__":
     print("=== Game Analytics Dashboard ===")
