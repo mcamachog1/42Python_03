@@ -371,24 +371,12 @@ def stream_events(players: list[dict]) -> Generator[dict, None, None]:
 def stream_fibonacci(n: int) -> Generator[int, None, None]:
     n1 = 0
     n2 = 1
-    for i in range(n - 2):
-        if i == 0:
-            yield n1
-        if i == 1:
-            yield n2
-        result = n1 + n2
-        n1 = n2
-        n2 = result
-        yield result
+    for _ in range(n):
+        yield n1
+        n1, n2 = n2, n1 + n2
 
 
 def stream_prime_numbers(n: int) -> Generator[int, None, None]:
-    """
-    :param n: the first n prime numbers
-    :type n: int
-    :return: stream the prime numbers
-    :rtype: Generator[int, None, None]
-    """
     def ft_is_prime(n: int) -> bool:
         i = 2
         is_prime = True

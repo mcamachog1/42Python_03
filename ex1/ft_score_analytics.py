@@ -2,7 +2,7 @@
 import sys
 
 
-def average_score(scores: list[int]) -> int:
+def average_score(scores: list[int]) -> float:
     return sum(scores)/len(scores)
 
 
@@ -29,7 +29,10 @@ def main() -> None:
             scores.append(int(sys.argv[i]))
         except ValueError as e:
             print(f"Error: the score '{sys.argv[i]}' must be an integer. {e}")
-    print_analytics(scores)
+    try:
+        print_analytics(scores)
+    except Exception as e:
+        print(f"Parameter error: {e}")
 
 
 if __name__ == "__main__":

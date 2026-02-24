@@ -360,7 +360,7 @@ def load_game_data() -> list[dict]:
 def list_comprehension() -> None:
     print("\n=== List Comprehension Examples ===")
     # Load example data
-    events: dict = load_game_data()
+    events: list = load_game_data()
 
     # === PLAYERS IN TWO LAST LEVELS ===
     # List with a condition
@@ -392,7 +392,7 @@ def list_comprehension() -> None:
 def dict_comprehension() -> None:
     print("\n=== Dict Comprehension Examples ===")
     # Load example data
-    events: dict = load_game_data()
+    events: list = load_game_data()
 
     # ==== TOP 5 SCORE WITH PLAYERS ===
 
@@ -444,7 +444,7 @@ def dict_comprehension() -> None:
 def set_comprehension() -> None:
     print("\n=== Set Comprehension Examples ===")
     # Load example data
-    events: dict = load_game_data()
+    events: list = load_game_data()
 
     # === UNIQUE PLAYERS ===
     # Like a list but without duplicate elements (SET)
@@ -466,7 +466,7 @@ def set_comprehension() -> None:
 def combined_analysis() -> None:
     print("\n== Combined Analysis ===")
     # Load example data
-    events: dict = load_game_data()
+    events: list = load_game_data()
 
     # === COUNT UNIQUE PLAYERS ===
     # set
@@ -503,8 +503,12 @@ def combined_analysis() -> None:
     average = sum(values)/len(values)
 
     # === PLAYER WITH THE GREATEST SCORE ===
-    max_key = max(total_score_by_player, key=total_score_by_player.get)
-    max_value = total_score_by_player[max_key]
+    max_value: int = 0
+    max_key: str = ''
+    for k, v in total_score_by_player.items():
+        if v > max_value:
+            max_value = v
+            max_key = k
 
     print(f"Total players: {total_players}")
     print(f"Total unique events: {total_unique_e}")
